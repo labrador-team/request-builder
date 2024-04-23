@@ -1,23 +1,24 @@
-import json
-import typing
+from json import JSONDecodeError
+from typing import Dict, Any, Callable
+from typing_extensions import Self
 
-import requests
+from requests import Response
 
 
 class RequestBuilder(object):
     def __init__(self, path: str, **kwargs):
         self._path: str = path
-        self._kwargs: typing.Dict[str, typing.Any] = kwargs
+        self._kwargs: Dict[str, Any] = kwargs
 
-    def __getitem__(self, item: str) -> 'RequestBuilder':
+    def __getitem__(self, item: str) -> Self:
         return self.__class__(f'{self._path}/{item}', **self._kwargs)
 
-    def __getattr__(self, item: str) -> 'RequestBuilder':
+    def __getattr__(self, item: str) -> Self:
         if item.startswith('_'):
             return super().__getattribute__(item)
         return self[item]
 
-    def __setattr__(self, key: str, value: typing.Any):
+    def __setattr__(self, key: str, value: Any):
         if key.startswith('_'):
             return super().__setattr__(key, value)
         elif key == 'path':
@@ -27,7 +28,7 @@ class RequestBuilder(object):
 
     def __call__(self, json_data=None, *, files=None, auth=None, headers=None,
                  data=None, timeout=None, stream=None, cookies=None, **params):
-        new_kwargs: typing.Dict[str, typing.Any] = dict(self._kwargs)
+        new_kwargs: Dict[str, Any] = dict(self._kwargs)
 
         # Handle data
         if json_data:
@@ -51,27 +52,28 @@ class RequestBuilder(object):
 
         return self.__class__(self._path, **new_kwargs)
 
-    def __truediv__(self, other: typing.Callable) -> requests.Response:
+    def __truediv__(self, other: Callable) -> Response:
         return other(self._path, **self._kwargs)
 
-    def __rtruediv__(self, other: typing.Callable) -> requests.Response:
+    def __rtruediv__(self, other: Callable) -> Response:
         return self / other
 
-    def __floordiv__(self, other: typing.Callable):
+    def __floordiv__(self, other: Callable):
         response = self / other
         if response.ok:
             try:
                 return response.json()
-            except json.JSONDecodeError:
+            except JSONDecodeError:
                 return response.content.decode(response.encoding)
         else:
             response.raise_for_status()
 
-    def __rfloordiv__(self, other: typing.Callable):
+    def __rfloordiv__(self, other: Callable):
         return self // other
 
     def __repr__(self):
-        return f'<{self.__class__.__name__}[{self._path}]({", ".join(f"{key}={value!r}" for key, value in self._kwargs.items())})>'
+        parameters = ", ".join(f"{key}={value!r}" for key, value in self._kwargs.items())
+        return f'<{self.__class__.__name__}[{self._path}]({parameters})>'
 
     def __str__(self):
         return repr(self)
