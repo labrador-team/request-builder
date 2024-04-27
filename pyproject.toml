@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "request-builder"
+version = "1.0.0"
+authors = [
+    { name = "Dor Genosar", email = "dor.genosar@outlook.com" },
+]
+description = "A helper package for building HTTP requests with the `requests` package"
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = ["requests~=2.31", "typing-extensions~=4.11.0"]
+keywords = [
+    "Requests",
+    "HTTP"
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Development Status :: 4 - Beta",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Topic :: Internet :: WWW/HTTP",
+]
+
+[project.urls]
+Homepage = "https://github.com/labrador-team/request-builder"
+Issues = "https://github.com/labrador-team/request-builder/issues"
