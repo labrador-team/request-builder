@@ -26,7 +26,7 @@ class AbstractRequestBuilder(Generic[TIn, TOut], metaclass=ABCMeta):
                  verify: bool = None,
                  proxies: Dict[str, str] = None,
                  **kwargs: Any):
-        self._path: str = path
+        self._path: str = path.rstrip('/')
         if cert:
             kwargs['cert'] = cert
         if auth:
@@ -54,7 +54,7 @@ class AbstractRequestBuilder(Generic[TIn, TOut], metaclass=ABCMeta):
         if key.startswith('_'):
             return super().__setattr__(key, value)
         elif key == 'path':
-            self._path = value
+            self._path = value.rstrip('/')
         else:
             self._kwargs[key] = value
 
