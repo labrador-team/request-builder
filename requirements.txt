@@ -1,0 +1,4 @@
+typing-extensions
+requests
+python-multipart
+pytest
