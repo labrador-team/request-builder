@@ -2,11 +2,14 @@ import itertools
 from abc import ABCMeta, abstractmethod
 from http.cookiejar import CookieJar
 from typing import Dict, Any, Callable, Union, Generic, TypeVar, Tuple, IO
+try:
+    from typing import Self
+except ImportError:
+    from typing_extensions import Self
 
 import requests
 from requests import Response
 from requests.auth import AuthBase
-from typing_extensions import Self
 
 TIn = TypeVar('TIn')
 TOut = TypeVar('TOut')
